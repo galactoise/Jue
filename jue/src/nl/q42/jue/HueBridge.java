@@ -8,6 +8,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -179,6 +180,25 @@ public class HueBridge {
 	}
 	
 	/**
+	 * Returns detailed information for the given light based on an input String describing the light's id
+	 * @param String lightId
+	 * @return detailed light information
+	 * @throws UnauthorizedException thrown if the user no longer exists
+	 * @throws EntityNotAvailableException thrown if a light with the given id doesn't exist 
+	 */
+	public FullLight getLightById(String lightId) throws IOException, ApiException {
+		requireAuthentication();
+		
+		Result result = http.get(getRelativeURL("lights/" + enc(lightId)));
+		
+		handleErrors(result);
+		
+		FullLight fullLight = safeFromJson(result.getBody(), FullLight.class);
+		fullLight.setId(lightId);
+		return fullLight;
+	}
+	
+	/**
 	 * Changes the name of the light and returns the new name.
 	 * A number will be appended to duplicate names, which may result in a new name exceeding 32 characters.
 	 * @param light light
@@ -216,6 +236,32 @@ public class HueBridge {
 		Result result = http.put(getRelativeURL("lights/" + enc(light.getId()) + "/state"), body);
 		
 		handleErrors(result);
+	}
+	
+	/**
+	 * Changes the state of a light by that light's id
+	 * @param String lightId
+	 * @param update changes to the state
+	 * @throws UnauthorizedException thrown if the user no longer exists
+	 * @throws EntityNotAvailableException thrown if the specified light no longer exists
+	 * @throws DeviceOffException thrown if the specified light is turned off
+	 */
+	public void setLightStateById(String lightId, StateUpdate update) throws IOException, ApiException {
+		requireAuthentication();
+		
+		String body = update.toJson();
+		Result result = http.put(getRelativeURL("lights/" + enc(lightId) + "/state"), body);
+		
+		handleErrors(result);
+	}
+	
+	public Object setPointSymbolById(String lightId, String pointSymbolString) throws IOException, ApiException{
+		
+		Result result = http.put(getRelativeURL("lights/" + enc(lightId) + "/pointsymbol"),pointSymbolString);
+		
+		handleErrors(result);
+		System.out.println(result.getBody());
+		return gson.fromJson(result.getBody(), Object.class);
 	}
 	
 	/**
@@ -416,6 +462,21 @@ public class HueBridge {
 		
 		String body = update.toJson();
 		Result result = http.put(getRelativeURL("groups/" + enc(group.getId()) + "/action"), body);
+		
+		handleErrors(result);
+	}
+	
+	/**
+	 * Transmit a symbol to 
+	 * @param groupId string representing the group of lights
+	 * @param symbolString the numerical string describing which lights to switch to which state
+	 * @throws UnauthorizedException thrown if the user no longer exists
+	 * @throws EntityNotAvailableException thrown if the specified group no longer exists
+	 */
+	public void transmitSymbolToGroupById(String groupId, String symbolString) throws IOException, ApiException {
+//		requireAuthentication();
+		
+		Result result = http.put(getRelativeURL("groups/" + enc(groupId) + "/transmitsymbol"), symbolString);
 		
 		handleErrors(result);
 	}
