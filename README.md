@@ -1,20 +1,6 @@
-Jue
+Juex
 ===
 
-Jue is a Java library allowing developers to easily use the features offered by a Philips Hue bridge. All publicly documented API features have been implemented, along with group creation and deletion.
+Juex, or "Java Hue Extended", is a fork of Q42's super solid Java client for Philips Hue bridge interaction.  The extension is basically two-fold - mavenizing it for ease of use in other projects, and adding convenience methods to retrieve individual objects by id rather.  The original project assumed that a caller would have knowledge of full state at the time of making a call to retrieve an object, and can therefore pass an object representing a superset of information about what is being retrieved.  However, Juex is being used as the backing for a REST API, which is innately stateless, and so lookup by object id is necessary.
 
-It is designed with Android compatibility in mind and we encourage you to use it in your apps!
-
-Documentation
--------------
-
-If this is your first time using the library, have a look at the [wiki pages](https://github.com/Q42/Jue/wiki) for tutorials to learn how to use this library. These will outline the organization and usage patterns.
-
-If you're looking for a reference, you can find Javadoc [here](http://q42.github.io/Jue/). Great care was taken to properly document all functions and classes and it is updated after every change.
-
-License
--------
-
-Jue is licensed under MIT, of which the terms are outlined in the `LICENSE` file.
-
-Also included is a copy of the GSON library, licensed under the Apache License 2.0, of which the terms can be found [here](http://www.apache.org/licenses/LICENSE-2.0).
+The original project can be found here: (https://github.com/Q42/Jue)
