@@ -2,13 +2,28 @@ package nl.q42.jue;
 
 import java.util.ArrayList;
 
+import org.codehaus.jackson.annotate.JsonProperty;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
+
 import nl.q42.jue.State.AlertMode;
 import nl.q42.jue.State.Effect;
 
 /**
  * Collection of updates to the state of a light.
  */
+@JsonSerialize(include=Inclusion.NON_NULL)
 public class StateUpdate {
+	private Boolean on;
+	private Integer bri;
+	private Integer hue;
+	private Integer sat;
+	private Integer ct;
+	private Integer transitionTime;
+	private float[] XY;
+	private AlertMode alert;
+	private Effect effect;
+
 	private ArrayList<Command> commands = new ArrayList<Command>();
 	
 	String toJson() {
@@ -47,6 +62,7 @@ public class StateUpdate {
 	 */
 	public StateUpdate setOn(boolean on) {
 		commands.add(new Command("on", on));
+		this.on = on;
 		return this;
 	}
 	
@@ -56,12 +72,14 @@ public class StateUpdate {
 	 * @param brightness brightness [1..255]
 	 * @return this object for chaining calls
 	 */
-	public StateUpdate setBrightness(int brightness) {
+	@JsonProperty("bri")
+	public StateUpdate setBrightness(Integer brightness) {
 		if (brightness < 0 || brightness > 255) {
 			throw new IllegalArgumentException("Brightness out of range");
 		}
 		
 		commands.add(new Command("bri", brightness));
+		this.bri = brightness;
 		return this;
 	}
 	
@@ -70,12 +88,13 @@ public class StateUpdate {
 	 * @param hue hue [0..65535]
 	 * @return this object for chaining calls
 	 */
-	public StateUpdate setHue(int hue) {
+	public StateUpdate setHue(Integer hue) {
 		if (hue < 0 || hue > 65535) {
 			throw new IllegalArgumentException("Hue out of range");
 		}
 		
 		commands.add(new Command("hue", hue));
+		this.hue = hue;
 		return this;
 	}
 	
@@ -84,12 +103,13 @@ public class StateUpdate {
 	 * @param saturation saturation [0..255]
 	 * @return this object for chaining calls
 	 */
-	public StateUpdate setSat(int saturation) {
+	public StateUpdate setSat(Integer saturation) {
 		if (saturation < 0 || saturation > 255) {
 			throw new IllegalArgumentException("Saturation out of range");
 		}
 		
 		commands.add(new Command("sat", saturation));
+		this.sat = saturation;
 		return this;
 	}
 	
@@ -116,6 +136,7 @@ public class StateUpdate {
 		}
 		
 		commands.add(new Command("xy", xy));
+		this.XY = xy;
 		return this;
 	}
 	
@@ -124,12 +145,14 @@ public class StateUpdate {
 	 * @param colorTemperature color temperature [153..500]
 	 * @return this object for chaining calls
 	 */
-	public StateUpdate setColorTemperature(int colorTemperature) {
+	@JsonProperty("ct")
+	public StateUpdate setColorTemperature(Integer colorTemperature) {
 		if (colorTemperature < 153 || colorTemperature > 500) {
 			throw new IllegalArgumentException("Color temperature out of range");
 		}
 		
 		commands.add(new Command("ct", colorTemperature));
+		this.ct = colorTemperature;
 		return this;
 	}
 	
@@ -141,6 +164,7 @@ public class StateUpdate {
 	 */
 	public StateUpdate setAlert(AlertMode mode) {
 		commands.add(new Command("alert", mode.toString().toLowerCase()));
+		this.alert = mode;
 		return this;
 	}
 	
@@ -152,6 +176,7 @@ public class StateUpdate {
 	 */
 	public StateUpdate setEffect(Effect effect) {
 		commands.add(new Command("effect", effect.toString().toLowerCase()));
+		this.effect = effect;
 		return this;
 	}
 	
@@ -161,12 +186,49 @@ public class StateUpdate {
 	 * @param timeMillis time in milliseconds [0..6553600]
 	 * @return this object for chaining calls
 	 */
-	public StateUpdate setTransitionTime(int timeMillis) {
+	public StateUpdate setTransitionTime(Integer timeMillis) {
 		if (timeMillis < 0 || timeMillis > 6553600) {
 			throw new IllegalArgumentException("Transition time out of range");
 		}
 		
 		commands.add(new Command("transitiontime", timeMillis / 100));
+		this.transitionTime = timeMillis;
 		return this;
+	}
+
+	public Integer getBri() {
+		return bri;
+	}
+
+	public Integer getCt() {
+		return ct;
+	}
+
+	public float[] getXY() {
+		return XY;
+	}
+
+	public Boolean getOn() {
+		return on;
+	}
+
+	public Integer getHue() {
+		return hue;
+	}
+
+	public Integer getSat() {
+		return sat;
+	}
+
+	public Integer getTransitionTime() {
+		return transitionTime;
+	}
+
+	public AlertMode getAlert() {
+		return alert;
+	}
+
+	public Effect getEffect() {
+		return effect;
 	}
 }
